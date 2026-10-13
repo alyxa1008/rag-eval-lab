@@ -16,3 +16,20 @@ parsing:
   row_tol: 4.0
   cell_gap: 8.0
   min_values: 2
+
+embedding:
+  provider: local            # local(sentence-transformers) | openai
+  model: BAAI/bge-m3         # openai 사용 시: text-embedding-3-small
+  cache_dir: .cache/embeddings
+  batch_size: 16
+
+bm25:
+  tokenizer: kiwi          # kiwi(형태소) | whitespace
+  k1: 1.5
+  b: 0.75
+
+retrieval:
+  weight_vector: 0.6       # w*vector + (1-w)*bm25
+  top_k: 10
+  candidate_k: 50
+  vector_store_dir: chroma_db

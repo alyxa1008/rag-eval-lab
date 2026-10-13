@@ -18,7 +18,7 @@
 |---|---|
 | 파싱 | PyMuPDF(본문) + pdfplumber(테두리 있는 표) + 단어 좌표 기반 재구성(테두리 없는 숫자 표). 표는 행 단위로 `항목 \| 단위 \| 2022년: x \| 2023년: y` 형태로 텍스트화하고 N행마다 분할 |
 | 청킹 | 페이지 기준 텍스트 청크 + 표 청크 분리. 모든 청크에 `page` 메타데이터 |
-| 임베딩 | OpenAI text-embedding-3-small (캐시) |
+| 임베딩 | BAAI/bge-m3 로컬 실행 (sentence-transformers), 결과 SQLite 캐시. 설정으로 OpenAI text-embedding-3-small 전환 가능 |
 | 벡터 DB | ChromaDB (로컬) |
 | 키워드 검색 | rank_bm25 + kiwipiepy 형태소 분석 |
 | 융합 | min-max 정규화 후 `w*vector + (1-w)*bm25` |
@@ -41,11 +41,17 @@
 ```bash
 python3.13 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt && pip install -e .
-cp .env.example .env            # OPENAI_API_KEY 입력
+cp .env.example .env            # OpenAI 임베딩을 쓸 때만 OPENAI_API_KEY 입력 (기본은 로컬 bge-m3, 키 불필요)
 
 # M0: 파싱 결과 확인 (페이지별 글자 수·표 수·표 행 수)
 python -m rag_eval parse --config configs/base.yaml
 python -m rag_eval parse --config configs/base.yaml --page 12   # 특정 쪽 청크 전문 보기
+
+# M1: 인덱싱(파싱 → 임베딩(캐시) → ChromaDB) 후 단건 검색
+python -m rag_eval index --config configs/base.yaml
+python -m rag_eval search --config configs/base.yaml -q "2024년 Scope 1 온실가스 배출량"
+python -m rag_eval search --config configs/base.yaml -q "임직원 수" --mode bm25   # API 키 없이 BM25만
+python -m rag_eval search --config configs/base.yaml -q "임직원 수" -w 0.3        # 벡터 가중치 지정
 
 # 평가셋 형식 검사
 python -m rag_eval check-eval-set

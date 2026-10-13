@@ -3,3 +3,12 @@ pymupdf>=1.24
 pdfplumber>=0.11
 pyyaml>=6.0
 pytest>=8.0
+
+# M1: retrieval
+sentence-transformers>=3.0   # local embeddings (BAAI/bge-m3)
+openai>=1.0                  # optional: provider=openai
+chromadb>=1.0
+rank_bm25>=0.2
+kiwipiepy>=0.20
+python-dotenv>=1.0
+numpy>=1.26

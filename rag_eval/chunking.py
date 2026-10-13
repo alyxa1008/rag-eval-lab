@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 from typing import Any
 
 from rag_eval.config import ChunkingConfig
@@ -104,3 +106,15 @@ def chunk_pages(pages: list[Page], cfg: ChunkingConfig, source: str) -> list[Chu
         for table in page.tables:
             chunks.extend(_table_chunks(table, source, cfg.table_rows_per_chunk))
     return chunks
+
+
+def save_chunks(chunks: list[Chunk], path: str | Path) -> None:
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        for c in chunks:
+            f.write(json.dumps(c.to_dict(), ensure_ascii=False) + "\n")
+
+
+def load_chunks(path: str | Path) -> list[Chunk]:
+    with open(path, encoding="utf-8") as f:
+        return [Chunk(**json.loads(line)) for line in f if line.strip()]

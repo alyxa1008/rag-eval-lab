@@ -24,6 +24,29 @@ class ParsingConfig:
 
 
 @dataclass
+class EmbeddingConfig:
+    provider: str = "local"      # "local" (sentence-transformers) | "openai"
+    model: str = "BAAI/bge-m3"
+    cache_dir: str = ".cache/embeddings"
+    batch_size: int = 16
+
+
+@dataclass
+class BM25Config:
+    tokenizer: str = "kiwi"      # "kiwi" (morphemes) | "whitespace"
+    k1: float = 1.5
+    b: float = 0.75
+
+
+@dataclass
+class RetrievalConfig:
+    weight_vector: float = 0.6   # w in  w*vector + (1-w)*bm25
+    top_k: int = 10
+    candidate_k: int = 50        # per-retriever pool size before fusion
+    vector_store_dir: str = "chroma_db"
+
+
+@dataclass
 class Config:
     name: str
     pdf_paths: list[str]
@@ -31,6 +54,9 @@ class Config:
     processed_dir: str = "data/processed"
     parsing: ParsingConfig = field(default_factory=ParsingConfig)
     chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
+    embedding: EmbeddingConfig = field(default_factory=EmbeddingConfig)
+    bm25: BM25Config = field(default_factory=BM25Config)
+    retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
 
     @property
     def output_dir(self) -> Path:
@@ -49,4 +75,7 @@ def load_config(path: str | Path) -> Config:
         processed_dir=str(raw.get("processed_dir", "data/processed")),
         parsing=ParsingConfig(**(raw.get("parsing") or {})),
         chunking=ChunkingConfig(**(raw.get("chunking") or {})),
+        embedding=EmbeddingConfig(**(raw.get("embedding") or {})),
+        bm25=BM25Config(**(raw.get("bm25") or {})),
+        retrieval=RetrievalConfig(**(raw.get("retrieval") or {})),
     )
