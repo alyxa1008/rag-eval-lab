@@ -1,0 +1,5 @@
+# M0: parsing / chunking
+pymupdf>=1.24
+pdfplumber>=0.11
+pyyaml>=6.0
+pytest>=8.0

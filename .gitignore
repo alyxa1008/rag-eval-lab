@@ -1,0 +1,32 @@
+# secrets
+.env
+
+# source documents (copyright) — download links in README
+data/raw/*
+!data/raw/.gitkeep
+
+# derived artifacts
+data/processed/
+.cache/
+chroma_db/
+
+# python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# editor / os
+.vscode/
+.idea/
+.DS_Store
+
+# claude local overrides
+.claude/settings.local.json
+
+# local-only project notes
+CLAUDE.md
+.claude/

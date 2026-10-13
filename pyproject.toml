@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-eval-lab"
+version = "0.1.0"
+description = "Hybrid retrieval quality evaluation on Korean ESG reports (Recall@k, MRR, held-out split)"
+requires-python = ">=3.11"
+dependencies = [
+    "pymupdf>=1.24",
+    "pdfplumber>=0.11",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools.packages.find]
+include = ["rag_eval*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:builtin type .* has no __module__ attribute:DeprecationWarning"]

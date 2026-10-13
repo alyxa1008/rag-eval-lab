@@ -1,0 +1,18 @@
+name: base
+seed: 42
+
+pdf_paths:
+  - data/raw/2025_삼성전자_지속가능경영보고서.pdf
+
+processed_dir: data/processed
+
+chunking:
+  max_chars: 800
+  overlap_chars: 100
+  table_rows_per_chunk: 10
+
+parsing:
+  layout_tables: true     # 테두리 없는 숫자 표를 단어 좌표로 재구성
+  row_tol: 4.0
+  cell_gap: 8.0
+  min_values: 2
