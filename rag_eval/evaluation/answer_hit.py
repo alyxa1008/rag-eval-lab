@@ -25,12 +25,21 @@ def extract_keys(answer: str) -> list[str]:
 
 
 def _norm(text: str) -> str:
-    return re.sub(r"\s+", "", text)
+    """Collapse whitespace to one space (keeps neighbouring numbers apart)."""
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def key_pattern(key: str) -> re.Pattern:
+    """Numbers must match as whole tokens ("1.9" must not match inside "41.9" or "1,998")."""
+    k = _norm(key)
+    if k[:1].isdigit():
+        return re.compile(rf"(?<![\d.,]){re.escape(k)}(?!\d|[.,]\d)")
+    return re.compile(re.escape(k))
 
 
 def chunk_contains_answer(chunk_text: str, keys: list[str]) -> bool:
     t = _norm(chunk_text)
-    return any(_norm(k) in t for k in keys)
+    return any(key_pattern(k).search(t) for k in keys)
 
 
 def answer_hit_rank(top_pages: list[int], top_texts: list[str], gold_pages: list[int], answer: str) -> int | None:

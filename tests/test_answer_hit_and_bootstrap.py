@@ -18,6 +18,13 @@ def test_chunk_contains_answer_ignores_whitespace():
     assert not chunk_contains_answer("매출액 | 조 원 | 302.2", extract_keys("300.9조 원"))
 
 
+def test_numeric_keys_match_whole_tokens_only():
+    assert not chunk_contains_answer("사원 % 43.9 42.5 41.9", extract_keys("1.9%"))
+    assert chunk_contains_answer("장애인 고용률 % 1.6 1.8 1.9", extract_keys("1.9%"))
+    assert not chunk_contains_answer("장애인 임직원 수 명 1,998", extract_keys("98%"))
+    assert chunk_contains_answer("폐기물 재활용률 % 97 97 98", extract_keys("98%"))
+
+
 def test_answer_hit_rank_requires_gold_page_and_key():
     pages = [62, 5, 62]
     texts = ["매출 소개 문단", "매출 300.9조 원", "매출액 302.2 258.9 300.9"]
