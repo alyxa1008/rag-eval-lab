@@ -26,9 +26,9 @@
 
 ## 평가셋
 
-- `data/eval_set.csv`, 30~40문항. **질문과 정답은 문서를 읽고 제가 직접 작성**했습니다.
+- `data/eval_set.csv`, 40문항(number 15 / table 8 / text 12 / multi 5). 질문은 문서 표현을 그대로 베끼지 않고 바꿔 썼고, 정답과 `gold_pages`는 원문 쪽과 대조해 검수했습니다.
 - 컬럼: `id, question, answer, gold_pages, type, split`
-- 약 25%를 `heldout`으로 두고, 튜닝 중에는 보지 않습니다. heldout은 `--split heldout`을 명시해야만 실행됩니다.
+- 40문항 중 10개(25%)를 시드 고정 무작위 추출로 `heldout`에 배정했고, 튜닝 중에는 보지 않습니다. heldout은 `--split heldout`을 명시해야만 실행됩니다.
 
 ## 지표
 
