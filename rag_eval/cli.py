@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 
-from rag_eval.commands import answerhit, check_eval_set, ci, compare, failures, index, parse, run, search, sweep
+from rag_eval.commands import answerhit, check_eval_set, ci, clean, compare, failures, index, parse, run, search, sweep
 
-COMMANDS = (parse, check_eval_set, index, search, run, sweep, compare, failures, answerhit, ci)
+COMMANDS = (parse, check_eval_set, index, search, run, sweep, compare, failures, answerhit, ci, clean)
 
 
 def build_parser() -> argparse.ArgumentParser:

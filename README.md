@@ -71,6 +71,7 @@ python -m rag_eval index --config configs/chunk400.yaml && python -m rag_eval sw
 python -m rag_eval compare                                        # results/compare_dev.md 한 표로 모음
 python -m rag_eval answer-hit --split dev                         # 청크 안 정답 포함 여부로 재채점 (검색 재실행 없음)
 python -m rag_eval ci --split dev                                 # 부트스트랩 95% 신뢰구간, 기준 대비 쌍 차이
+python -m rag_eval clean                                          # dev 결과만 삭제 (heldout 결과는 절대 지우지 않음)
 
 pytest
 ```
@@ -269,7 +270,7 @@ heldout 10문항 결과 (1회 실행, `python -m rag_eval run --config configs/c
   - dev에서 보고 그대로 둔 것 2건. q021(책임광물 현장점검 추이)은 47쪽에 2024년 값(202개사)만 있어 3개년 추이의 근거로는 부족해 gold에 넣지 않음. q030(2030년 취수량 목표)은 21쪽 각주 "2021년 대비"가 부분 근거라 넣지 않음.
   - **heldout에서 발견했지만 고치지 않은 것 4건** (이미 결과를 본 뒤라 수정하지 않고 기록만 남김): q006(장애인 고용률 1.9%)과 q007(총 교육비 2,404억 원)은 각주상 국내 임직원 기준인데 질문에 범위가 빠져 있다. q008·q009(온실가스 배출량)는 77쪽 검증서 이미지에도 같은 수치가 있으나 텍스트 층이 없어 gold에 포함하지 않았다(q038도 같은 사정). q034(제3자 검증기관)도 76쪽 인증보고서 이미지에 같은 내용이 있다.
   - 검수표의 자동 발췌가 짧은 숫자("0.3", "1.9", "98")를 긴 숫자 안에서 잘못 잡는 문제를 발견해, 숫자는 온전한 토큰으로만 매칭하도록 고쳤다. 같은 규칙을 AnsHit@k 채점에도 적용했다.
-  - dev gold를 고쳤으므로 dev 실험은 전부 다시 돌렸다. heldout은 다시 돌리지 않았다.
+  - dev gold를 고쳤으므로 dev 실험은 전부 다시 돌렸다. heldout은 다시 돌리지 않았다. 이때 결과 폴더를 지우다가 heldout 결과 파일까지 삭제한 것을 뒤늦게 발견해, 재실행 없이 이전 커밋(`758f002`)에서 파일을 그대로 복구했다. 재발 방지로 dev 결과만 지우는 `clean` 명령을 추가했다.
 
 ### 5. M3 — 실험 (dev 30문항만)
 
