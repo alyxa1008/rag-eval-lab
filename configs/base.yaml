@@ -39,3 +39,9 @@ eval:
   ks: [1, 3, 5]
   top_k: 10
   results_dir: results
+
+rerank:
+  enabled: false            # run/sweep 에서 --rerank 로 켤 수 있음
+  model: BAAI/bge-reranker-v2-m3
+  top_n: 20
+  batch_size: 16

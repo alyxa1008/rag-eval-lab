@@ -38,22 +38,24 @@ def run(args: argparse.Namespace) -> int:
         return 1
     chunks = load_chunks(chunks_path)
     w = cfg.retrieval.weight_vector if args.w is None else args.w
-    retriever = build_retriever(cfg, chunks, with_vector=w > 0)
+    rerank = cfg.rerank.enabled if args.rerank is None else args.rerank
+    retriever = build_retriever(cfg, chunks, with_vector=w > 0, with_reranker=rerank)
 
-    results = evaluate(retriever, items, top_k=cfg.eval.top_k, weight_vector=w)
+    results = evaluate(retriever, items, top_k=cfg.eval.top_k, weight_vector=w, rerank=rerank)
     summaries = summarize(results, cfg.eval.ks)
 
-    run_name = args.name or f"w{w:g}"
+    run_name = args.name or (f"w{w:g}" + ("_rerank" if rerank else ""))
     out_dir = Path(cfg.eval.results_dir) / cfg.name / split / run_name
     run_info = {
         "config": str(args.config), "config_name": cfg.name, "split": split, "weight_vector": w,
+        "rerank": (cfg.rerank.model if rerank else None), "rerank_top_n": cfg.rerank.top_n,
         "embedding": f"{cfg.embedding.provider}:{cfg.embedding.model}", "tokenizer": cfg.bm25.tokenizer,
         "chunking": vars(cfg.chunking), "top_k": cfg.eval.top_k, "n_items": len(items),
         "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     paths = write_results(out_dir, results, summaries, cfg.eval.ks, run_info)
 
-    print(f"config={cfg.name} split={split} w={w:g} n={len(items)} "
+    print(f"config={cfg.name} split={split} w={w:g} rerank={'on' if rerank else 'off'} n={len(items)} "
           f"embedding={run_info['embedding']} tokenizer={cfg.bm25.tokenizer}\n")
     print(markdown_table([s.as_row(cfg.eval.ks) for s in summaries]))
     k_show = max(cfg.eval.ks)
@@ -73,5 +75,7 @@ def register(sub: argparse._SubParsersAction) -> None:
                    help="dev (default). heldout only for the single final run")
     p.add_argument("--eval-set", default=None, help="override eval set path")
     p.add_argument("-w", type=float, default=None, help="override vector weight for this run")
-    p.add_argument("--name", default=None, help="run name for the results folder (default: w<weight>)")
+    p.add_argument("--name", default=None, help="run name for the results folder (default: w<weight>[_rerank])")
+    p.add_argument("--rerank", dest="rerank", action="store_true", default=None, help="force reranker on")
+    p.add_argument("--no-rerank", dest="rerank", action="store_false", help="force reranker off")
     p.set_defaults(func=run)

@@ -1,0 +1,6 @@
+group,n,recall@1,recall@3,recall@5,mrr
+all,30,0.9,1.0,1.0,0.9444
+type=multi,4,0.75,1.0,1.0,0.875
+type=number,9,0.8889,1.0,1.0,0.9444
+type=table,6,1.0,1.0,1.0,1.0
+type=text,11,0.9091,1.0,1.0,0.9394

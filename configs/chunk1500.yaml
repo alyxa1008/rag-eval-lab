@@ -1,0 +1,47 @@
+name: chunk1500
+seed: 42
+
+pdf_paths:
+  - data/raw/2025_삼성전자_지속가능경영보고서.pdf
+
+processed_dir: data/processed
+
+chunking:
+  max_chars: 1500
+  overlap_chars: 150
+  table_rows_per_chunk: 20
+
+parsing:
+  layout_tables: true     # 테두리 없는 숫자 표를 단어 좌표로 재구성
+  row_tol: 4.0
+  cell_gap: 8.0
+  min_values: 2
+
+embedding:
+  provider: local            # local(sentence-transformers) | openai
+  model: BAAI/bge-m3         # openai 사용 시: text-embedding-3-small
+  cache_dir: .cache/embeddings
+  batch_size: 16
+
+bm25:
+  tokenizer: kiwi          # kiwi(형태소) | whitespace
+  k1: 1.5
+  b: 0.75
+
+retrieval:
+  weight_vector: 0.6       # w*vector + (1-w)*bm25
+  top_k: 10
+  candidate_k: 50
+  vector_store_dir: chroma_db
+
+eval:
+  eval_set: data/eval_set.csv
+  ks: [1, 3, 5]
+  top_k: 10
+  results_dir: results
+
+rerank:
+  enabled: false            # run/sweep 에서 --rerank 로 켤 수 있음
+  model: BAAI/bge-reranker-v2-m3
+  top_n: 20
+  batch_size: 16

@@ -7,10 +7,11 @@ from rag_eval.evaluation.metrics import QueryResult
 from rag_eval.retrieval.retriever import HybridRetriever
 
 
-def evaluate(retriever: HybridRetriever, items: list[EvalItem], top_k: int, weight_vector: float) -> list[QueryResult]:
+def evaluate(retriever: HybridRetriever, items: list[EvalItem], top_k: int, weight_vector: float,
+             rerank: bool = False) -> list[QueryResult]:
     results: list[QueryResult] = []
     for it in items:
-        hits = retriever.search(it.question, k=top_k, weight_vector=weight_vector)
+        hits = retriever.search(it.question, k=top_k, weight_vector=weight_vector, rerank=rerank)
         results.append(QueryResult(
             id=it.id, question=it.question, type=it.type, split=it.split, gold_pages=it.gold_pages,
             top_pages=[h.chunk.page for h in hits],

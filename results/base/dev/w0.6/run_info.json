@@ -3,6 +3,8 @@
   "config_name": "base",
   "split": "dev",
   "weight_vector": 0.6,
+  "rerank": null,
+  "rerank_top_n": 20,
   "embedding": "local:BAAI/bge-m3",
   "tokenizer": "kiwi",
   "chunking": {
@@ -12,5 +14,5 @@
   },
   "top_k": 10,
   "n_items": 30,
-  "timestamp": "2026-10-13T08:21:02+00:00"
+  "timestamp": "2026-10-13T09:55:50+00:00"
 }

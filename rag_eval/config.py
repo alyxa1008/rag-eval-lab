@@ -47,6 +47,14 @@ class RetrievalConfig:
 
 
 @dataclass
+class RerankConfig:
+    enabled: bool = False
+    model: str = "BAAI/bge-reranker-v2-m3"
+    top_n: int = 20              # fused candidates passed to the cross-encoder
+    batch_size: int = 16
+
+
+@dataclass
 class EvalConfig:
     eval_set: str = "data/eval_set.csv"
     ks: tuple[int, ...] = (1, 3, 5)
@@ -65,6 +73,7 @@ class Config:
     embedding: EmbeddingConfig = field(default_factory=EmbeddingConfig)
     bm25: BM25Config = field(default_factory=BM25Config)
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
+    rerank: RerankConfig = field(default_factory=RerankConfig)
     eval: EvalConfig = field(default_factory=EvalConfig)
 
     @property
@@ -87,6 +96,7 @@ def load_config(path: str | Path) -> Config:
         embedding=EmbeddingConfig(**(raw.get("embedding") or {})),
         bm25=BM25Config(**(raw.get("bm25") or {})),
         retrieval=RetrievalConfig(**(raw.get("retrieval") or {})),
+        rerank=RerankConfig(**(raw.get("rerank") or {})),
         eval=_eval_config(raw.get("eval") or {}),
     )
 
