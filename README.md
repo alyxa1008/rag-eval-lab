@@ -56,6 +56,12 @@ python -m rag_eval search --config configs/base.yaml -q "임직원 수" -w 0.3  
 # 평가셋 형식 검사
 python -m rag_eval check-eval-set
 
+# M2: 평가 (기본은 dev 세트만. heldout은 설정 확정 후 마지막에 딱 한 번)
+python -m rag_eval run --config configs/base.yaml
+python -m rag_eval run --config configs/base.yaml -w 0.3          # 가중치만 바꿔서 실행
+python -m rag_eval run --config configs/base.yaml --split heldout  # 최종 1회
+# -> results/<config>/<split>/<run>/ 에 per_query.csv, summary.csv, summary.md, run_info.json
+
 pytest
 ```
 

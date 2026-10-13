@@ -33,3 +33,9 @@ retrieval:
   top_k: 10
   candidate_k: 50
   vector_store_dir: chroma_db
+
+eval:
+  eval_set: data/eval_set.csv
+  ks: [1, 3, 5]
+  top_k: 10
+  results_dir: results

@@ -47,6 +47,14 @@ class RetrievalConfig:
 
 
 @dataclass
+class EvalConfig:
+    eval_set: str = "data/eval_set.csv"
+    ks: tuple[int, ...] = (1, 3, 5)
+    top_k: int = 10              # chunks retrieved per question (>= max(ks))
+    results_dir: str = "results"
+
+
+@dataclass
 class Config:
     name: str
     pdf_paths: list[str]
@@ -57,6 +65,7 @@ class Config:
     embedding: EmbeddingConfig = field(default_factory=EmbeddingConfig)
     bm25: BM25Config = field(default_factory=BM25Config)
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
+    eval: EvalConfig = field(default_factory=EvalConfig)
 
     @property
     def output_dir(self) -> Path:
@@ -78,4 +87,12 @@ def load_config(path: str | Path) -> Config:
         embedding=EmbeddingConfig(**(raw.get("embedding") or {})),
         bm25=BM25Config(**(raw.get("bm25") or {})),
         retrieval=RetrievalConfig(**(raw.get("retrieval") or {})),
+        eval=_eval_config(raw.get("eval") or {}),
     )
+
+
+def _eval_config(raw: dict) -> EvalConfig:
+    cfg = EvalConfig(**{**raw, "ks": tuple(int(k) for k in raw.get("ks", EvalConfig.ks))})
+    if cfg.top_k < max(cfg.ks):
+        raise ValueError(f"eval.top_k ({cfg.top_k}) must be >= max(eval.ks) ({max(cfg.ks)})")
+    return cfg
